@@ -7,8 +7,9 @@ Automatizar flujos básicos de navegación web en saucedemo.com usando Selenium 
 - Python
 - Selenium WebDriver
 - Pytest
+- Pytest HTML
 - Git & GitHub
 
+
 ## 📦 Instalación
-```bash
 pip install -r requirements.txt

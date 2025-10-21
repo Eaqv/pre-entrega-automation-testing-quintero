@@ -23,6 +23,13 @@ Fue desarrollado utilizando Python, Selenium y Pytest para validar funcionalidad
 
 ## Instalación y Configuración
 
+Este proyecto utiliza un entorno virtual para aislar las dependencias. Debes tener instalado **Python** y seguir estas instrucciones.
+
+### Crea el entorno virtual
+
+    python -m venv .venv
+
+
 ### Activar el entorno virtual
 
     .venv\Scripts\activate   # En Windows

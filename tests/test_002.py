@@ -1,46 +1,36 @@
-import pytest
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 
-def test_verificacion_catalogo():
-    print("Test catálogo iniciado")
-    service = Service(r"C:/Users/Alejandro/Documents/chromedriver-win64/chromedriver.exe")  
-    driver = webdriver.Chrome(service=service)
-    driver.implicitly_wait(5)
+def test_inventory_verificado(login_in_driver):
+    try:
+        driver = login_in_driver
 
-    # Login
-    driver.get("https://www.saucedemo.com/")
-    driver.find_element(By.ID, "user-name").send_keys("standard_user")
-    driver.find_element(By.ID, "password").send_keys("secret_sauce")
-    driver.find_element(By.ID, "login-button").click()
+        # Validamos título de la página
+        assert driver.title == "Swag Labs", "El título de la página no es correcto"
 
-    # Vemos si efectivamente se llama Products la pagina
+        # Validamos que el título visual sea 'Products'
+        title_element = driver.find_element(By.CLASS_NAME, "title")
+        assert title_element.text == "Products", "El encabezado visual no es 'Products'"
+        print("Título visual:", title_element.text)
 
-    title_element = driver.find_element(By.CLASS_NAME, "title")
-    assert title_element.text == "Products"
-    print("El titulo de la pagina es: ",title_element.text)
+        # Verificamos que haya productos
+        productos = driver.find_elements(By.CLASS_NAME, "inventory_item")
+        assert len(productos) > 0, "No hay productos visibles en la página"
+        print("Cantidad de productos:", len(productos))
 
-    # Contamos los productos para ver si hay uno o mas
-    
-    productos = driver.find_elements(By.CLASS_NAME, "inventory_item")
-    assert len(productos) > 0
-    print("Vemos ",len(productos), " productos.")
+        # Mostramos nombre y precio del primero
+        nombre = productos[0].find_element(By.CLASS_NAME, "inventory_item_name").text
+        precio = productos[0].find_element(By.CLASS_NAME, "inventory_item_price").text
+        print(f"Primer producto: {nombre} - Precio: {precio}")
 
-    # Nombre y precio del primer producto
-    
-    nombre = productos[0].find_element(By.CLASS_NAME, "inventory_item_name").text
-    precio = productos[0].find_element(By.CLASS_NAME, "inventory_item_price").text
-    print("1er Producto")
-    print(f"Producto: {nombre} - Precio: {precio}")
-    
+        # Verificamos menú hamburguesa y filtro
+        menu = driver.find_element(By.ID, "react-burger-menu-btn")
+        filtro = driver.find_element(By.CLASS_NAME, "product_sort_container")
+        assert menu.is_displayed(), "El menú hamburguesa no está visible"
+        assert filtro.is_displayed(), "El filtro de productos no está visible"
+        print("Menú y filtro verificados correctamente")
 
-    # Vemos si el menú hamburguesa y el filtro estan presentes
-    
-    menu = driver.find_element(By.ID, "react-burger-menu-btn")
-    filtro = driver.find_element(By.CLASS_NAME, "product_sort_container")
-    assert menu.is_displayed()
-    assert filtro.is_displayed()
-    print("Verificamos que esta el menu hamburguesa y el filtro")
-
-    driver.quit()
+    except Exception as e:
+        print(f"Error en test_inventory_verificado: {e}")
+        raise
+    finally:
+        driver.quit()

@@ -1,20 +1,15 @@
-import pytest
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 
-def test_login_exitoso():
-    print("Test iniciado")
-    service = Service(r"C:/Users/Alejandro/Documents/chromedriver-win64/chromedriver.exe")
-    driver = webdriver.Chrome(service=service)
-    driver.get("https://www.saucedemo.com/")
+def test_login_validation(login_in_driver):
+    driver = login_in_driver
 
-    # Login
-    driver.find_element(By.ID, "user-name").send_keys("standard_user")
-    driver.find_element(By.ID, "password").send_keys("secret_sauce")
-    driver.find_element(By.ID, "login-button").click()
-
-    # Verificamos que el login fue exitoso
-    assert "inventory.html" in driver.current_url
-
-    driver.quit()
+    try:
+        assert "/inventory.html" in driver.current_url, "No se redirigió al inventario"
+        print("Login exitoso y validado correctamente")
+    except AssertionError as e:
+        try:
+            error_msg = driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']").text
+            print(f"Error detectado en pantalla: {error_msg}")
+        except:
+            print("No se redirigió correctamente y no se encontró mensaje de error")
+        raise e
